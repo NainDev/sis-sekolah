@@ -1,0 +1,118 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "pengaturan": { ".read": true, ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'" },
+    "statistik":  { ".read": true, ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'" },
+    "profil":     { ".read": true, ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'" },
+    "berita": {
+      ".read": true,
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      "$id": { "dilihat": { ".write": true, ".validate": "newData.isNumber()" } }
+    },
+    "galeri": { ".read": true, ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'" },
+
+    "pesan": {
+      ".read": "root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      "$id": {
+        ".write": "!data.exists() || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+        ".validate": "newData.hasChildren(['nama','email','subjek','isi','tanggal']) && newData.child('isi').val().length <= 2000 && newData.child('nama').val().length <= 100"
+      }
+    },
+
+    "ppdb": {
+      ".read": "root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      ".indexOn": ["status"],
+      "$id": { ".write": "!data.exists() || root.child('users').child(auth.uid).child('role').val() === 'admin'" }
+    },
+    "ppdb_status": {
+      "$no": {
+        ".read": true,
+        ".write": "!data.exists() || root.child('users').child(auth.uid).child('role').val() === 'admin'"
+      }
+    },
+    "ppdb_berkas": {
+      ".read": "root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      "$id": { ".write": "!data.exists() || root.child('users').child(auth.uid).child('role').val() === 'admin'" }
+    },
+
+    "users": {
+      ".read": "root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'guru'",
+      ".indexOn": ["kelasId", "role"],
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin' || (auth != null && auth.uid === $uid && !root.child('users').exists())",
+        "alamat": { ".write": "auth != null && auth.uid === $uid" },
+        "hp":     { ".write": "auth != null && auth.uid === $uid" },
+        "ortu":   { ".write": "auth != null && auth.uid === $uid" }
+      }
+    },
+
+    "guru":  { ".read": "auth != null", ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'" },
+    "kelas": { ".read": "auth != null", ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'" },
+    "jurusan": { ".read": "auth != null", ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'" },
+    "tahunAjaran": { ".read": "auth != null", ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'" },
+    "catatan_siswa": {
+      ".read": "root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'guru'",
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'guru'"
+    },
+    "mapel": { ".read": "auth != null", ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'" },
+    "jadwal": { ".read": "auth != null", ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'" },
+
+    "materi": { ".read": "auth != null", ".write": "root.child('users').child(auth.uid).child('role').val() === 'guru' || root.child('users').child(auth.uid).child('role').val() === 'admin'" },
+    "tugas": {
+      ".read": "auth != null",
+      ".indexOn": ["kelasId"],
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'guru' || root.child('users').child(auth.uid).child('role').val() === 'admin'"
+    },
+
+    "pengumpulan": {
+      ".read": "root.child('users').child(auth.uid).child('role').val() === 'guru' || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'guru' || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        "$tid": {
+          ".write": "auth != null && auth.uid === $uid && !data.child('nilai').exists()",
+          ".validate": "newData.hasChild('waktu')"
+        }
+      }
+    },
+
+    "nilai": {
+      ".read": "root.child('users').child(auth.uid).child('role').val() === 'guru' || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'guru' || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      "$uid": { ".read": "auth != null && auth.uid === $uid" }
+    },
+
+    "absensi": {
+      ".read": "root.child('users').child(auth.uid).child('role').val() === 'guru' || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'guru' || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        "$tgl": {
+          // Siswa hanya boleh membuat absensi hadir/terlambat miliknya sendiri dengan token gerbang yang valid
+          ".write": "auth != null && auth.uid === $uid && !data.exists() && (newData.child('status').val() === 'hadir' || newData.child('status').val() === 'terlambat') && root.child('gerbang/sesi/status').val() === 'aktif' && root.child('gerbang/token').child(newData.child('tokenId').val()).exists() && newData.child('ts').val() >= now - 60000 && newData.child('ts').val() <= now + 60000"
+        }
+      }
+    },
+    "absensi_hari": {
+      ".read": "auth != null",
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'guru' || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      "$tgl": { "$uid": { ".write": "auth != null && auth.uid === $uid && !data.exists() && (newData.child('status').val() === 'hadir' || newData.child('status').val() === 'terlambat')" } }
+    },
+
+    "gerbang": {
+      ".read": "auth != null",
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'guru'"
+    },
+    "gerbang_pakai": {
+      ".read": "root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'guru'",
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      "$tokenId": { "$uid": { ".read": "auth != null && auth.uid === $uid", ".write": "auth != null && auth.uid === $uid && !data.exists()" } }
+    }
+  }
+}
